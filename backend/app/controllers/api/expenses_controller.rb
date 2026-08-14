@@ -1,6 +1,7 @@
 class Api::ExpensesController < ApplicationController
   def index
-    expenses = Expense.includes(:category).order(created_at: :desc)
+    # FIX for BUG-001: Order by date descending instead of created_at
+    expenses = Expense.includes(:category).order(date: :desc)
 
     if params[:year].present? && params[:month].present?
       year = params[:year].to_i
@@ -17,6 +18,8 @@ class Api::ExpensesController < ApplicationController
 
   def create
     expense = Expense.new(expense_params)
+    # Provide a default payer_name if none is provided to avoid database null errors
+    expense.payer_name = "Self" if expense.payer_name.blank?
 
     if expense.save
       render json: format_expense(expense), status: :created
@@ -44,7 +47,8 @@ class Api::ExpensesController < ApplicationController
   private
 
   def expense_params
-    params.require(:expense).permit(:description, :amount, :category_id, :date)
+    # Added :payer_name to permitted parameters
+    params.require(:expense).permit(:description, :amount, :category_id, :date, :payer_name)
   end
 
   def format_expense(expense)
@@ -54,6 +58,7 @@ class Api::ExpensesController < ApplicationController
       amount: expense.amount.to_f,
       category: expense.category.name,
       date: expense.date.to_s,
+      payer_name: expense.payer_name,
       created_at: expense.created_at,
       updated_at: expense.updated_at
     }
