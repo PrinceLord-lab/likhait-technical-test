@@ -17,7 +17,6 @@ class Api::ExpensesController < ApplicationController
 
   def create
     expense = Expense.new(expense_params)
-    # Ensure payer_name is never null to satisfy database constraint
     expense.payer_name = "Self" if expense.payer_name.blank?
 
     if expense.save
