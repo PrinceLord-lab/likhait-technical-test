@@ -98,6 +98,7 @@ export function ExpenseForm({
         type="number"
         step="0.01"
         placeholder="0.00"
+        max={new Date().toISOString().split("T")[0]}
         value={formData.amount}
         onChange={(e) => handleChange("amount", e.target.value)}
         error={errors.amount}
