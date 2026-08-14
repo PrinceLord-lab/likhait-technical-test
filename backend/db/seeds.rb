@@ -145,6 +145,7 @@ while current_date <= end_date
         description: template[:description],
         amount: amount,
         category: category,
+        payer_name:'Prince Lord',
         date: current_date,
         created_at: current_date,
         updated_at: current_date
